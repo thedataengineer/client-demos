@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insomnia Cookies - AI Demo</title>
+    <style>
+        :root {
+            --deep-brown: #3E2723;
+            --warm-brown: #4E342E;
+            --gold: #FFB300;
+            --gold-dark: #FFA000;
+            --cream: #FFF8E1;
+            --cream-light: #FFFBF0;
+            --shadow: rgba(62, 39, 35, 0.1);
+            --shadow-md: rgba(62, 39, 35, 0.15);
+            --shadow-lg: rgba(62, 39, 35, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-light) 100%);
+            color: var(--deep-brown);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--deep-brown);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .cart-icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .cart-icon-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--gold);
+            color: var(--deep-brown);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .cart-badge.hidden {
+            display: none;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--gold);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--deep-brown);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--warm-brown);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .demo-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-md);
+        }
+
+        .demo-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-card h3 {
+            font-size: 1.75rem;
+            color: var(--deep-brown);
+            margin-bottom: 1rem;
+        }
+
+        .demo-card p {
+            color: var(--warm-brown);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            background: var(--gold);
+            color: var(--deep-brown);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--deep-brown);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--warm-brown);
+        }
+
+        .back-btn {
+            margin-bottom: 2rem;
+        }
+
+        /* Personalization View */
+        .personalization-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        .customer-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            height: fit-content;
+        }
+
+        .customer-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gold);
+            color: var(--deep-brown);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+        }
+
+        .customer-name {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--deep-brown);
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--warm-brown);
+            margin-bottom: 0.75rem;
+        }
+
+        .order-history {
+            margin-bottom: 2rem;
+        }
+
+        .order-item {
+            background: var(--cream);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--warm-brown);
+        }
+
+        .preferences {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .preference-tag {
+            background: var(--gold);
+            color: var(--deep-brown);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .recommendations-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .recommendations-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .recommendations-header h2 {
+            font-size: 2rem;
+            color: var(--deep-brown);
+        }
+
+        .cookie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .cookie-card {
+            background: var(--cream-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .cookie-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        .cookie-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .cookie-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--deep-brown);
+            margin-bottom: 0.5rem;
+        }
+
+        .cookie-match {
+            color: var(--gold-dark);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cookie-reason {
+            font-size: 0.813rem;
+            color: var(--warm-brown);
+            margin-bottom: 1rem;
+            min-height: 2.5rem;
+        }
+
+        .metrics-panel {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            background: var(--deep-brown);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Chat View */
+        .chat-layout {
+            display: grid;
+            grid-template-rows: 1fr auto;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            height: 600px;
+            overflow-y: auto;
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            max-width: 75%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: var(--gold);
+            color: var(--deep-brown);
+        }
+
+        .message.user .message-avatar {
+            background: var(--deep-brown);
+            color: white;
+        }
+
+        .message-content {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: var(--cream);
+            color: var(--deep-brown);
+        }
+
+        .message.user .message-content {
+            background: var(--deep-brown);
+            color: white;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 1rem 1.25rem;
+            background: var(--cream);
+            border-radius: 12px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--warm-brown);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(-5px);
+            }
+        }
+
+        .chat-input-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--cream);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            background: var(--cream);
+            color: var(--deep-brown);
+            border: none;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--gold);
+        }
+
+        .chat-metrics {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--cream);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--warm-brown);
+            font-weight: 600;
+        }
+
+        /* Analytics Dashboard */
+        .dashboard-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2rem;
+            color: var(--deep-brown);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            color: var(--warm-brown);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow);
+            text-align: center;
+        }
+
+        .metric-box-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-box-label {
+            color: var(--warm-brown);
+            font-weight: 500;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--deep-brown);
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-canvas {
+            height: 300px;
+        }
+
+        .top-products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--cream);
+            border-radius: 8px;
+        }
+
+        .product-name {
+            font-weight: 500;
+            color: var(--deep-brown);
+        }
+
+        .product-count {
+            font-weight: 700;
+            color: var(--gold-dark);
+        }
+
+        .heatmap-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--deep-brown);
+        }
+
+        .heatmap-cell.low {
+            background: rgba(255, 179, 0, 0.2);
+        }
+
+        .heatmap-cell.medium {
+            background: rgba(255, 179, 0, 0.5);
+        }
+
+        .heatmap-cell.high {
+            background: rgba(255, 179, 0, 0.8);
+        }
+
+        .heatmap-cell.very-high {
+            background: var(--gold);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--cream);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Cart Drawer */
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px var(--shadow-lg);
+            z-index: 1000;
+            transition: right 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-drawer.open {
+            right: 0;
+        }
+
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .cart-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--cream);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h2 {
+            font-size: 1.5rem;
+            color: var(--deep-brown);
+        }
+
+        .cart-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--warm-brown);
+            transition: transform 0.3s;
+        }
+
+        .cart-close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--warm-brown);
+        }
+
+        .cart-empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--cream-light);
+            border-radius: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .cart-item-icon {
+            font-size: 2.5rem;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--deep-brown);
+            margin-bottom: 0.25rem;
+        }
+
+        .cart-item-price {
+            color: var(--warm-brown);
+            font-size: 0.875rem;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: var(--warm-brown);
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0;
+            transition: color 0.3s;
+        }
+
+        .cart-item-remove:hover {
+            color: #C62828;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: white;
+            border-radius: 20px;
+            padding: 0.25rem;
+        }
+
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: var(--gold);
+            color: var(--deep-brown);
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--gold-dark);
+            transform: scale(1.1);
+        }
+
+        .quantity-value {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--deep-brown);
+        }
+
+        .cart-footer {
+            border-top: 2px solid var(--cream);
+            padding: 1.5rem;
+            background: var(--cream-light);
+        }
+
+        .cart-promo {
+            margin-bottom: 1rem;
+        }
+
+        .promo-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .promo-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--cream);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+        }
+
+        .promo-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .promo-btn {
+            padding: 0.75rem 1.25rem;
+            background: var(--deep-brown);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 0.875rem;
+        }
+
+        .promo-btn:hover {
+            background: var(--warm-brown);
+        }
+
+        .promo-message {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .promo-message.success {
+            background: rgba(33, 128, 141, 0.15);
+            color: #1B6E7A;
+        }
+
+        .promo-message.error {
+            background: rgba(198, 40, 40, 0.15);
+            color: #C62828;
+        }
+
+        .cart-totals {
+            margin-bottom: 1rem;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--warm-brown);
+        }
+
+        .cart-total-row.discount {
+            color: #1B6E7A;
+            font-weight: 600;
+        }
+
+        .cart-total-row.final {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--deep-brown);
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 2px solid var(--cream);
+        }
+
+        .cart-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: var(--warm-brown);
+            border: 2px solid var(--cream);
+        }
+
+        .btn-clear:hover {
+            background: var(--cream);
+            border-color: var(--cream);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--deep-brown);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px var(--shadow-lg);
+            z-index: 2000;
+            transition: bottom 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            bottom: 2rem;
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Menu View */
+        .menu-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .menu-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            background: var(--cream);
+            color: var(--deep-brown);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            border-color: var(--gold-dark);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--shadow-md);
+        }
+
+        .product-icon {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .product-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--deep-brown);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            font-size: 0.875rem;
+            color: var(--warm-brown);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            flex: 1;
+        }
+
+        .product-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-tag {
+            background: var(--cream);
+            color: var(--warm-brown);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+        }
+
+        .btn-add-cart {
+            padding: 0.75rem 1.5rem;
+            background: var(--gold);
+            color: var(--deep-brown);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--gold-dark);
+            transform: scale(1.05);
+        }
+
+        /* Checkout Modal */
+        .checkout-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .checkout-modal.open {
+            display: flex;
+        }
+
+        .checkout-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .checkout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkout-header h2 {
+            font-size: 1.75rem;
+            color: var(--deep-brown);
+        }
+
+        .checkout-section {
+            margin-bottom: 2rem;
+        }
+
+        .checkout-section h3 {
+            font-size: 1.25rem;
+            color: var(--deep-brown);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--deep-brown);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--cream);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .order-summary {
+            background: var(--cream-light);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--warm-brown);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--deep-brown);
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--cream);
+        }
+
+        .confirmation-modal {
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .confirmation-modal h2 {
+            color: var(--deep-brown);
+            margin-bottom: 1rem;
+        }
+
+        .confirmation-modal p {
+            color: var(--warm-brown);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .personalization-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .nav {
+                gap: 1rem;
+                font-size: 0.875rem;
+            }
+
+            .cart-drawer {
+                max-width: 100%;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            🍪 Insomnia Cookies AI
+        </div>
+        <div class="header-actions">
+            <nav class="nav">
+                <a class="nav-link" onclick="showView('home')">Home</a>
+                <a class="nav-link" onclick="showView('personalization')">Personalization</a>
+                <a class="nav-link" onclick="showView('menu')">Menu</a>
+                <a class="nav-link" onclick="showView('chat')">AI Assistant</a>
+                <a class="nav-link" onclick="showView('analytics')">Analytics</a>
+            </nav>
+            <button class="cart-icon-btn" onclick="toggleCart()">
+                🛒
+                <span class="cart-badge hidden" id="cartBadge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="cart-close-btn" onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="cart-empty" id="cartEmpty">
+                <div class="cart-empty-icon">🛒</div>
+                <p>Your cart is empty</p>
+                <p style="font-size: 0.875rem;">Add some delicious cookies!</p>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-promo">
+                <div class="promo-input-wrapper">
+                    <input type="text" class="promo-input" id="promoInput" placeholder="Promo Code">
+                    <button class="promo-btn" onclick="applyPromo()">Apply</button>
+                </div>
+                <div id="promoMessage"></div>
+            </div>
+            <div class="cart-totals" id="cartTotals"></div>
+            <div class="cart-actions">
+                <button class="btn" onclick="openCheckout()">Checkout</button>
+                <button class="btn btn-clear" onclick="clearCart()">Clear Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✓</span>
+        <span id="toastMessage">Added to cart!</span>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="checkout-modal" id="checkoutModal">
+        <div class="checkout-content" id="checkoutContent">
+            <!-- Checkout form will be inserted here -->
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Home View -->
+        <div id="home" class="view active">
+            <div class="hero">
+                <h1>🍪 AI-Powered Cookie Experience</h1>
+                <p>Discover how artificial intelligence transforms cookie cravings into personalized perfection, available when you need it most.</p>
+            </div>
+
+            <div class="demo-cards">
+                <div class="demo-card" onclick="showView('personalization')">
+                    <div class="demo-card-icon">🎯</div>
+                    <h3>AI Personalization Engine</h3>
+                    <p>See how machine learning analyzes customer preferences and order history to deliver perfectly tailored cookie recommendations that increase satisfaction and order value.</p>
+                    <button class="btn">Try Demo</button>
+                </div>
+
+                <div class="demo-card" onclick="showView('chat')">
+                    <div class="demo-card-icon">💬</div>
+                    <h3>AI Order Assistant</h3>
+                    <p>Experience our intelligent chatbot that helps customers find their perfect cookies, answers questions, and guides them through dietary needs and gifting options.</p>
+                    <button class="btn">Try Demo</button>
+                </div>
+            </div>
+
+            <div class="demo-cards" style="margin-top: 2rem;">
+                <div class="demo-card" onclick="showView('analytics')">
+                    <div class="demo-card-icon">📊</div>
+                    <h3>Campus Analytics Dashboard</h3>
+                    <p>Explore real-time operational intelligence showing order patterns, peak hours, and product performance across campus locations.</p>
+                    <button class="btn">View Dashboard</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personalization View -->
+        <div id="personalization" class="view">
+            <button class="btn btn-secondary back-btn" onclick="showView('home')">← Back to Home</button>
+
+            <div class="personalization-layout">
+                <div class="customer-card">
+                    <div class="customer-avatar" id="customerAvatar">AC</div>
+                    <div class="customer-name" id="customerName">Alex Chen</div>
+
+                    <div class="order-history">
+                        <div class="section-title">Recent Orders</div>
+                        <div id="orderHistoryList"></div>
+                    </div>
+
+                    <div class="preferences">
+                        <div class="section-title">Preferences</div>
+                        <div id="preferencesList"></div>
+                    </div>
+                </div>
+
+                <div class="recommendations-section">
+                    <div class="recommendations-header">
+                        <h2>Recommended For You</h2>
+                        <button class="btn" onclick="refreshRecommendations()">
+                            <span id="refreshBtnText">🔄 Refresh</span>
+                        </button>
+                    </div>
+
+                    <div class="cookie-grid" id="cookieGrid"></div>
+
+                    <div class="metrics-panel">
+                        <div class="metric-card">
+                            <div class="metric-value">+23%</div>
+                            <div class="metric-label">Order Value Increase</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">+34%</div>
+                            <div class="metric-label">Repeat Customer Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chat" class="view">
+            <button class="btn btn-secondary back-btn" onclick="showView('home')">← Back to Home</button>
+
+            <div class="chat-layout">
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+
+                <div class="chat-input-section">
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask me about cookies, delivery, dietary options..." />
+                        <button class="btn" onclick="sendMessage()">Send</button>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="quickAction('View Menu')">📋 View Menu</button>
+                        <button class="quick-action-btn" onclick="quickAction('Track Order')">📍 Track Order</button>
+                        <button class="quick-action-btn" onclick="quickAction('Rewards Balance')">⭐ Rewards Balance</button>
+                    </div>
+
+                    <div class="chat-metrics">
+                        💡 AI Chat increases conversion by 18%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu View -->
+        <div id="menu" class="view">
+            <button class="btn btn-secondary back-btn" onclick="showView('home')">← Back to Home</button>
+
+            <div class="menu-header">
+                <h2>Cookie Menu</h2>
+                <p>All our delicious cookies, available for delivery until 3 AM</p>
+                <div class="menu-controls">
+                    <button class="filter-btn active" onclick="filterMenu('all')">All</button>
+                    <button class="filter-btn" onclick="filterMenu('chocolate')">Chocolate</button>
+                    <button class="filter-btn" onclick="filterMenu('caramel')">Caramel</button>
+                    <button class="filter-btn" onclick="filterMenu('classic')">Classic</button>
+                    <button class="filter-btn" onclick="filterMenu('vegan')">Vegan</button>
+                    <button class="filter-btn" onclick="filterMenu('specialty')">Specialty</button>
+                </div>
+            </div>
+
+            <div class="product-grid" id="productGrid"></div>
+        </div>
+
+        <!-- Analytics View -->
+        <div id="analytics" class="view">
+            <button class="btn btn-secondary back-btn" onclick="showView('home')">← Back to Home</button>
+
+            <div class="dashboard-header">
+                <h2>CampusOps Analytics - University of Pennsylvania</h2>
+                <p>Real-time operational intelligence • Last updated: 2:00 PM EST</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-box-value">342</div>
+                    <div class="metric-box-label">Total Orders Today</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-box-value">11 PM</div>
+                    <div class="metric-box-label">Peak Hour</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-box-value">18 min</div>
+                    <div class="metric-box-label">Avg Delivery Time</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-box-value">🍪</div>
+                    <div class="metric-box-label">Triple Chocolate Chunk</div>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Hourly Order Volume</div>
+                    <canvas id="orderChart" class="chart-canvas"></canvas>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Top 5 Products</div>
+                    <div class="top-products-list" id="topProductsList"></div>
+                </div>
+            </div>
+
+            <div class="heatmap-container">
+                <div class="chart-title">Order Density by Campus Zone</div>
+                <div class="heatmap-grid" id="heatmapGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Data
+        const cookies = [
+            { name: "Triple Chocolate Chunk", category: "chocolate", description: "Rich chocolate cookie with chunks of dark, milk, and white chocolate", price: 4, tags: ["chocolate", "popular", "warm"] },
+            { name: "S'mores Deluxe", category: "chocolate", description: "Graham cracker cookie with marshmallow and chocolate chips", price: 4, tags: ["chocolate", "marshmallow", "campfire"] },
+            { name: "Salted Caramel Crunch", category: "caramel", description: "Buttery cookie with caramel chunks and sea salt", price: 4, tags: ["caramel", "salty-sweet", "premium"] },
+            { name: "Classic Chocolate Chip", category: "classic", description: "Traditional recipe with premium chocolate chips", price: 3, tags: ["classic", "chocolate", "bestseller"] },
+            { name: "Double Chocolate Mint", category: "chocolate", description: "Chocolate cookie with mint chocolate chips", price: 4, tags: ["chocolate", "mint", "refreshing"] },
+            { name: "Peanut Butter Cup", category: "peanut-butter", description: "Peanut butter cookie with chocolate peanut butter cups", price: 4, tags: ["peanut-butter", "chocolate", "protein"] },
+            { name: "Snickerdoodle", category: "cinnamon", description: "Cinnamon sugar cookie with a soft, chewy center", price: 3, tags: ["cinnamon", "classic", "sweet"] },
+            { name: "Vegan Chocolate Chunk", category: "vegan", description: "Plant-based chocolate chip cookie, equally delicious", price: 5, tags: ["vegan", "chocolate", "dietary"] },
+            { name: "Cookie Cake", category: "specialty", description: "Shareable jumbo cookie cake, customizable message", price: 15, tags: ["cake", "shareable"] },
+            { name: "Mixed Cookie Box (12 Pack)", category: "specialty", description: "Assortment of 12 cookies, your choice of any flavors", price: 35, tags: ["box", "assortment", "gift"] }
+        ];
+
+        const promoCodes = [
+            { code: "FREECOOKIE", type: "free_cookie", desc: "Get one free cookie with your order" },
+            { code: "SAVE5", type: "amount_off", desc: "$5 off orders $25 and up", threshold: 25, amount: 5 },
+            { code: "STUDENT10", type: "percent_off", desc: "10% off all campus orders", percent: 10 }
+        ];
+
+        const customers = [
+            {
+                name: "Alex Chen",
+                avatar: "AC",
+                orderHistory: [
+                    "Triple Chocolate Chunk x3, 10:45 PM",
+                    "S'mores Deluxe x2, 11:30 PM",
+                    "Double Chocolate Mint x4, 9:15 PM"
+                ],
+                preferences: [
+                    "Loves chocolate",
+                    "Prefers warm cookies",
+                    "Night owl - orders after 10pm"
+                ]
+            },
+            {
+                name: "Sam Rodriguez",
+                avatar: "SR",
+                orderHistory: [
+                    "Salted Caramel Crunch x2, 8:30 PM",
+                    "Classic Chocolate Chip x6, 10:00 PM",
+                    "Snickerdoodle x3, 9:45 PM"
+                ],
+                preferences: [
+                    "Caramel enthusiast",
+                    "Orders for groups",
+                    "Prefers sweet over rich"
+                ]
+            }
+        ];
+
+        const analyticsData = {
+            hourlyVolume: [
+                { hour: "6 PM", orders: 12 },
+                { hour: "7 PM", orders: 23 },
+                { hour: "8 PM", orders: 45 },
+                { hour: "9 PM", orders: 67 },
+                { hour: "10 PM", orders: 89 },
+                { hour: "11 PM", orders: 124 },
+                { hour: "12 AM", orders: 98 },
+                { hour: "1 AM", orders: 54 }
+            ],
+            topProducts: [
+                { name: "Triple Chocolate Chunk", count: 78 },
+                { name: "Classic Chocolate Chip", count: 65 },
+                { name: "S'mores Deluxe", count: 52 },
+                { name: "Salted Caramel Crunch", count: 41 },
+                { name: "Snickerdoodle", count: 38 }
+            ]
+        };
+
+        const chatResponses = {
+            chocolate: "Great choice! Based on your love for chocolate, I recommend our **Triple Chocolate Chunk** (dark, milk & white chocolate) and **S'mores Deluxe** (marshmallow & chocolate). Both are available warm! 🍪",
+            caramel: "Perfect! For caramel lovers, our **Salted Caramel Crunch** is a customer favorite - buttery cookie with caramel chunks and sea salt. Also try the **Caramel Chocolate Chip** for a double treat! 🍪",
+            vegan: "We've got you covered! Our **Vegan Chocolate Chunk** is just as delicious as the original. Made with plant-based ingredients but you'd never know the difference. 🌱🍪",
+            dietary: "We offer several options! **Vegan Chocolate Chunk** for plant-based diets, and we can accommodate most dietary needs. What specific requirements do you have? 🍪",
+            gift: "Great idea! Our **Deluxe Cookie Box** (12 cookies, mix & match) is perfect for sharing. You can also add our **Cookie Cake** for celebrations. Want me to help you pick flavors? 🎁",
+            party: "Perfect for parties! Our **Cookie Box Bundles** come in sizes of 12, 24, or 36 cookies. You can mix and match any flavors. Popular choices include variety packs with chocolate, caramel, and classic options! 🎉",
+            delivery: "We deliver fresh, warm cookies until 3 AM! Average delivery time in your area is 15-20 minutes. Track your order in real-time once placed. 🚗💨",
+            time: "We're open late! Delivery available until 3 AM on weekends and 1 AM on weekdays. Orders typically arrive in 15-20 minutes. 🕐",
+            default: "I can help you find the perfect cookies! Tell me what you're craving - chocolate, caramel, something classic, or dietary preferences? Or ask about delivery, rewards, or gifts! 🍪"
+        };
+
+        // State
+        let currentCustomer = 0;
+        let currentView = 'home';
+        let chatInitialized = false;
+        let chartInstance = null;
+        let cart = [];
+        let appliedPromo = null;
+        let currentFilter = 'all';
+
+        // Initialize
+        function init() {
+            loadCustomerData();
+            generateRecommendations();
+            renderMenu();
+            updateCartUI();
+        }
+
+        // View Management
+        function showView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewName).classList.add('active');
+            currentView = viewName;
+
+            if (viewName === 'chat' && !chatInitialized) {
+                initializeChat();
+            }
+
+            if (viewName === 'analytics') {
+                initializeAnalytics();
+            }
+        }
+
+        // Customer Data
+        function loadCustomerData() {
+            const customer = customers[currentCustomer];
+            document.getElementById('customerAvatar').textContent = customer.avatar;
+            document.getElementById('customerName').textContent = customer.name;
+
+            const orderHistoryList = document.getElementById('orderHistoryList');
+            orderHistoryList.innerHTML = customer.orderHistory
+                .map(order => `<div class="order-item">${order}</div>`)
+                .join('');
+
+            const preferencesList = document.getElementById('preferencesList');
+            preferencesList.innerHTML = customer.preferences
+                .map(pref => `<div class="preference-tag">${pref}</div>`)
+                .join('');
+        }
+
+        // Recommendations
+        function generateRecommendations() {
+            const customer = customers[currentCustomer];
+            let recommendedCookies;
+
+            if (customer.name === "Alex Chen") {
+                recommendedCookies = [
+                    { cookie: cookies[0], match: 95, reason: "Based on your love for chocolate" },
+                    { cookie: cookies[1], match: 92, reason: "Warm chocolate with marshmallow" },
+                    { cookie: cookies[4], match: 88, reason: "Your favorite: chocolate + mint" },
+                    { cookie: cookies[3], match: 85, reason: "Classic choice, always warm" },
+                    { cookie: cookies[5], match: 78, reason: "Rich chocolate & peanut butter" },
+                    { cookie: cookies[7], match: 72, reason: "Chocolate option for variety" }
+                ];
+            } else {
+                recommendedCookies = [
+                    { cookie: cookies[2], match: 96, reason: "Your favorite: salted caramel" },
+                    { cookie: cookies[6], match: 90, reason: "Sweet cinnamon for groups" },
+                    { cookie: cookies[3], match: 87, reason: "Classic bestseller" },
+                    { cookie: cookies[0], match: 82, reason: "Popular group choice" },
+                    { cookie: cookies[1], match: 78, reason: "Sweet marshmallow flavor" },
+                    { cookie: cookies[5], match: 75, reason: "Rich but not too heavy" }
+                ];
+            }
+
+            const cookieGrid = document.getElementById('cookieGrid');
+            cookieGrid.innerHTML = recommendedCookies
+                .map(rec => `
+                    <div class="cookie-card">
+                        <div class="cookie-emoji">🍪</div>
+                        <div class="cookie-name">${rec.cookie.name}</div>
+                        <div class="cookie-match">${rec.match}% Match</div>
+                        <div class="cookie-reason">${rec.reason}</div>
+                        <button class="btn" onclick="addToCart('${rec.cookie.name}')">Add to Cart</button>
+                    </div>
+                `)
+                .join('');
+        }
+
+        function refreshRecommendations() {
+            const btn = document.getElementById('refreshBtnText');
+            btn.innerHTML = '<span class="loading-spinner"></span>';
+
+            setTimeout(() => {
+                currentCustomer = (currentCustomer + 1) % customers.length;
+                loadCustomerData();
+                generateRecommendations();
+                btn.textContent = '🔄 Refresh';
+            }, 800);
+        }
+
+        // Cart Functions
+        function addToCart(cookieName) {
+            const cookie = cookies.find(c => c.name === cookieName);
+            if (!cookie) return;
+
+            const existingItem = cart.find(item => item.name === cookieName);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...cookie, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`Added ${cookieName} to cart! 🍪`);
+        }
+
+        function removeFromCart(cookieName) {
+            cart = cart.filter(item => item.name !== cookieName);
+            updateCartUI();
+            showToast('Item removed from cart', '🗑️');
+        }
+
+        function updateQuantity(cookieName, delta) {
+            const item = cart.find(item => item.name === cookieName);
+            if (!item) return;
+
+            item.quantity += delta;
+            if (item.quantity < 1) {
+                removeFromCart(cookieName);
+            } else {
+                updateCartUI();
+            }
+        }
+
+        function clearCart() {
+            if (cart.length === 0) return;
+            if (confirm('Are you sure you want to clear your cart?')) {
+                cart = [];
+                appliedPromo = null;
+                updateCartUI();
+                showToast('Cart cleared', '🗑️');
+            }
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const cartEmpty = document.getElementById('cartEmpty');
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            if (totalItems === 0) {
+                badge.classList.add('hidden');
+                cartEmpty.style.display = 'block';
+                cartItems.style.display = 'none';
+                cartFooter.style.display = 'none';
+            } else {
+                badge.classList.remove('hidden');
+                badge.textContent = totalItems;
+                cartEmpty.style.display = 'none';
+                cartItems.style.display = 'flex';
+                cartFooter.style.display = 'block';
+
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-icon">🍪</div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${item.price} each</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button class="cart-item-remove" onclick="removeFromCart('${item.name}')">✕</button>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="updateQuantity('${item.name}', -1)">−</button>
+                                <span class="quantity-value">${item.quantity}</span>
+                                <button class="quantity-btn" onclick="updateQuantity('${item.name}', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                updateCartTotals();
+            }
+        }
+
+        function updateCartTotals() {
+            const cartTotals = document.getElementById('cartTotals');
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.08;
+            let discount = 0;
+
+            if (appliedPromo) {
+                if (appliedPromo.type === 'amount_off' && subtotal >= appliedPromo.threshold) {
+                    discount = appliedPromo.amount;
+                } else if (appliedPromo.type === 'percent_off') {
+                    discount = subtotal * (appliedPromo.percent / 100);
+                } else if (appliedPromo.type === 'free_cookie') {
+                    const cheapestCookie = Math.min(...cart.map(item => item.price));
+                    discount = cheapestCookie;
+                }
+            }
+
+            const total = subtotal + tax - discount;
+
+            let html = `
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </div>
+                <div class="cart-total-row">
+                    <span>Tax (8%)</span>
+                    <span>$${tax.toFixed(2)}</span>
+                </div>
+            `;
+
+            if (discount > 0) {
+                html += `
+                    <div class="cart-total-row discount">
+                        <span>Discount</span>
+                        <span>-$${discount.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="cart-total-row final">
+                    <span>Total</span>
+                    <span>$${total.toFixed(2)}</span>
+                </div>
+            `;
+
+            cartTotals.innerHTML = html;
+        }
+
+        function applyPromo() {
+            const input = document.getElementById('promoInput');
+            const code = input.value.trim().toUpperCase();
+            const messageDiv = document.getElementById('promoMessage');
+
+            if (!code) return;
+
+            const promo = promoCodes.find(p => p.code === code);
+
+            if (!promo) {
+                messageDiv.innerHTML = '<div class="promo-message error">Invalid promo code</div>';
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            if (promo.type === 'amount_off' && subtotal < promo.threshold) {
+                messageDiv.innerHTML = `<div class="promo-message error">Minimum order of $${promo.threshold} required</div>`;
+                return;
+            }
+
+            appliedPromo = promo;
+            messageDiv.innerHTML = `<div class="promo-message success">✓ ${promo.desc}</div>`;
+            input.value = '';
+            updateCartTotals();
+        }
+
+        function showToast(message, icon = '✓') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastIcon.textContent = icon;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Chat
+        function initializeChat() {
+            const initialMessages = [
+                { type: 'user', text: 'I want something chocolatey and warm' },
+                { type: 'bot', text: 'Great choice! Based on your love for chocolate, I recommend our **Triple Chocolate Chunk** (dark, milk & white chocolate) and **S\'mores Deluxe** (marshmallow & chocolate). Both are available warm! 🍪' },
+                { type: 'user', text: 'What about something for my friend who likes caramel?' },
+                { type: 'bot', text: 'Perfect! For caramel lovers, our **Salted Caramel Crunch** is a customer favorite - buttery cookie with caramel chunks and sea salt. Also try the **Caramel Chocolate Chip** for a double treat! 🍪' }
+            ];
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = initialMessages
+                .map(msg => createMessageHTML(msg.type, msg.text))
+                .join('');
+
+            chatInitialized = true;
+
+            document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        function createMessageHTML(type, text) {
+            const avatar = type === 'user' ? '👤' : '🍪';
+            return `
+                <div class="message ${type}">
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">${text}</div>
+                </div>
+            `;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML += createMessageHTML('user', message);
+
+            input.value = '';
+
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.classList.add('active');
+
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            setTimeout(() => {
+                typingIndicator.classList.remove('active');
+                const response = getBotResponse(message);
+                chatMessages.innerHTML += createMessageHTML('bot', response);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1500);
+        }
+
+        function getBotResponse(message) {
+            const lowerMessage = message.toLowerCase();
+
+            if (lowerMessage.includes('chocolate')) return chatResponses.chocolate;
+            if (lowerMessage.includes('caramel')) return chatResponses.caramel;
+            if (lowerMessage.includes('vegan')) return chatResponses.vegan;
+            if (lowerMessage.includes('dietary')) return chatResponses.dietary;
+            if (lowerMessage.includes('gift')) return chatResponses.gift;
+            if (lowerMessage.includes('party')) return chatResponses.party;
+            if (lowerMessage.includes('delivery')) return chatResponses.delivery;
+            if (lowerMessage.includes('time')) return chatResponses.time;
+
+            return chatResponses.default;
+        }
+
+        function quickAction(action) {
+            const responses = {
+                'View Menu': 'Here\'s our full menu! We have chocolate lovers, caramel dreams, classic favorites, and dietary options. What sounds good? 🍪',
+                'Track Order': 'Your order is on the way! Estimated arrival: 12 minutes. Driver: Mike 🚗',
+                'Rewards Balance': 'You have 450 points! Just 50 more points until your next free cookie! 🌟'
+            };
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML += createMessageHTML('bot', responses[action]);
+
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Analytics
+        function initializeAnalytics() {
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const ctx = document.getElementById('orderChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: analyticsData.hourlyVolume.map(d => d.hour),
+                    datasets: [{
+                        label: 'Orders',
+                        data: analyticsData.hourlyVolume.map(d => d.orders),
+                        backgroundColor: '#FFB300',
+                        borderColor: '#FFA000',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(62, 39, 35, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            const topProductsList = document.getElementById('topProductsList');
+            topProductsList.innerHTML = analyticsData.topProducts
+                .map(product => `
+                    <div class="product-item">
+                        <span class="product-name">🍪 ${product.name}</span>
+                        <span class="product-count">${product.count}</span>
+                    </div>
+                `)
+                .join('');
+
+            const zones = [
+                { name: 'Quad', level: 'very-high' },
+                { name: 'Locust', level: 'high' },
+                { name: 'Hill', level: 'medium' },
+                { name: 'DRL', level: 'high' },
+                { name: 'Huntsman', level: 'medium' },
+                { name: 'Van Pelt', level: 'very-high' },
+                { name: 'Wharton', level: 'high' },
+                { name: 'Kings Court', level: 'low' },
+                { name: 'Rodin', level: 'medium' },
+                { name: 'Towne', level: 'high' }
+            ];
+
+            const heatmapGrid = document.getElementById('heatmapGrid');
+            heatmapGrid.innerHTML = zones
+                .map(zone => `<div class="heatmap-cell ${zone.level}">${zone.name}</div>`)
+                .join('');
+        }
+
+        // Menu Functions
+        function renderMenu() {
+            const productGrid = document.getElementById('productGrid');
+            const filteredCookies = currentFilter === 'all'
+                ? cookies
+                : cookies.filter(c => c.category === currentFilter || c.tags.includes(currentFilter));
+
+            productGrid.innerHTML = filteredCookies.map(cookie => `
+                <div class="product-card">
+                    <div class="product-icon">🍪</div>
+                    <div class="product-name">${cookie.name}</div>
+                    <div class="product-description">${cookie.description}</div>
+                    <div class="product-tags">
+                        ${cookie.tags.slice(0, 3).map(tag => `<span class="product-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="product-footer">
+                        <div class="product-price">$${cookie.price}</div>
+                        <button class="btn-add-cart" onclick="addToCart('${cookie.name}')">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMenu(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderMenu();
+        }
+
+        // Checkout Functions
+        function openCheckout() {
+            if (cart.length === 0) return;
+
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('checkoutContent');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = subtotal * 0.08;
+            let discount = 0;
+
+            if (appliedPromo) {
+                if (appliedPromo.type === 'amount_off' && subtotal >= appliedPromo.threshold) {
+                    discount = appliedPromo.amount;
+                } else if (appliedPromo.type === 'percent_off') {
+                    discount = subtotal * (appliedPromo.percent / 100);
+                } else if (appliedPromo.type === 'free_cookie') {
+                    const cheapestCookie = Math.min(...cart.map(item => item.price));
+                    discount = cheapestCookie;
+                }
+            }
+
+            const total = subtotal + tax - discount;
+
+            content.innerHTML = `
+                <div class="checkout-header">
+                    <h2>Checkout</h2>
+                    <button class="cart-close-btn" onclick="closeCheckout()">✕</button>
+                </div>
+
+                <div class="checkout-section">
+                    <h3>Order Summary</h3>
+                    <div class="order-summary">
+                        ${cart.map(item => `
+                            <div class="summary-item">
+                                <span>${item.name} x${item.quantity}</span>
+                                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                        <div class="summary-item">
+                            <span>Subtotal</span>
+                            <span>$${subtotal.toFixed(2)}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Tax (8%)</span>
+                            <span>$${tax.toFixed(2)}</span>
+                        </div>
+                        ${discount > 0 ? `
+                            <div class="summary-item" style="color: #1B6E7A; font-weight: 600;">
+                                <span>Discount</span>
+                                <span>-$${discount.toFixed(2)}</span>
+                            </div>
+                        ` : ''}
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span>$${total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-section">
+                    <h3>Delivery Information</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="checkoutName" placeholder="Alex Chen">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-input" id="checkoutPhone" placeholder="(484) 555-8484">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Delivery Address</label>
+                        <input type="text" class="form-input" id="checkoutAddress" placeholder="123 Spruce St, Philadelphia, PA">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Special Instructions (Optional)</label>
+                        <input type="text" class="form-input" id="checkoutNotes" placeholder="No nuts, extra napkins, etc.">
+                    </div>
+                </div>
+
+                <button class="btn" style="width: 100%;" onclick="placeOrder()">Place Order - $${total.toFixed(2)}</button>
+            `;
+
+            modal.classList.add('open');
+            toggleCart();
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('open');
+        }
+
+        function placeOrder() {
+            const name = document.getElementById('checkoutName').value.trim();
+            const phone = document.getElementById('checkoutPhone').value.trim();
+            const address = document.getElementById('checkoutAddress').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const content = document.getElementById('checkoutContent');
+            content.innerHTML = `
+                <div class="confirmation-modal">
+                    <div class="confirmation-icon">🎉</div>
+                    <h2>Order Confirmed!</h2>
+                    <p><strong>Thank you, ${name}!</strong></p>
+                    <p>Your warm, delicious cookies are being prepared and will arrive in approximately <strong>15-20 minutes</strong>.</p>
+                    <p>Order confirmation sent to your phone.</p>
+                    <p style="font-size: 0.875rem; margin-top: 1rem;">Track your order in real-time via text message.</p>
+                    <button class="btn" style="width: 100%;" onclick="finishOrder()">Done</button>
+                </div>
+            `;
+        }
+
+        function finishOrder() {
+            cart = [];
+            appliedPromo = null;
+            updateCartUI();
+            closeCheckout();
+            showToast('Thank you for your order! 🍪', '🎉');
+            showView('home');
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+<footer style="text-align: center; padding: 20px; background-color: #f5f5f5; margin-top: 40px;">
+    <p>© 2024 Karteek Yadavilli. All rights reserved. Made as a demo mock</p>
+</footer>
+</html>
